@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon World - Moje Pasje</title>
+  <style>
+  /* --- CSS: STYL I WYGLĄD --- */
+  :root {
+    --bg-color: #050505;
+    --text-color: #e0e0e0;
+    --sidebar-bg: #0a0a0a;
+    --neon-pink: #ff00ff;
+    --neon-blue: #00ffff;
+    --neon-green: #00ff00;
+    --neon-purple: #9d00ff;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    min-height: 100vh;
+  }
+  /* --- PASEK BOCZNY (MENU) --- */
+  #sidebar {
+    width: 250px;
+    background: var(--sidebar-bg);
+    border-left: 2px solid var(--neon-blue);
+    box-shadow: -5px 0 20px rgba(0, 255, 255, 0.1);
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 1000;
+  }
+  /* --- GŁÓWNA TREŚĆ --- */
+  #content-area {
+    width: calc(100% - 250px); /* Zostaw miejsce na sidebar */
+    padding: 50px 80px;
+    margin-right: 250px; /* Margines po prawej */
+  }
+  /* --- STYLIZACJA TEKSTU I NAGŁÓWKÓW --- */
+  h1 {
+    font-size: 3.5rem;
+    margin-bottom: 30px;
+    color: var(--neon-pink);
+    text-shadow: 0 0 15px var(--neon-pink);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  h2 {
+    font-size: 2rem;
+    color: var(--neon-blue);
+    margin-bottom: 25px;
+    text-shadow: 0 0 8px var(--neon-blue);
+    border-bottom: 2px solid var(--neon-blue);
+    display: inline-block;
+    padding-bottom: 5px;
+  }
+  p {
+    line-height: 1.8;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    text-align: justify;
+    color: #ccc;
+  }
+  /* --- ZDJĘCIA I MEDIA --- */
+  .media-container {
+    margin: 30px 0;
+    text-align: center;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+    max-height: 500px;
+    border-radius: 20px;
+    border: 3px solid var(--neon-green);
+    box-shadow: 0 0 25px rgba(0, 255, 0, 0.4);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    margin-bottom: 20px; /* Odstęp między zdjęciami */
+  }
+  img:hover { transform: scale(1.02); box-shadow: 0 0 40px rgba(0, 255, 0, 0.6); }
+  /* --- PRZYCISKI MENU --- */
+  .nav-btn {
+    background: transparent;
+    color: #fff;
+    border: 1px solid var(--neon-purple);
+    padding: 12px;
+    cursor: pointer;
+    text-align: left;
+    transition: 0.3s;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    background: var(--neon-purple);
+    color: #fff;
+    box-shadow: 0 0 15px var(--neon-purple);
+    font-weight: bold;
+    border-color: #fff;
+  }
+  /* --- PRZEŁĄCZNIK JĘZYKA --- */
+  .lang-switch {
+    background: var(--neon-pink);
+    border: none;
+    padding: 10px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    transition: 0.3s;
+    text-align: center;
+  }
+  .lang-switch:hover { box-shadow: 0 0 15px var(--neon-pink); }
+  /* --- SEKCJE (ANIMACJE) --- */
+  section { display: none; animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+  section.active { display: block; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  /* --- NOWY STYL DLA MUZYKI (GRID KART) --- */
+  .music-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 30px; }
+  .music-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--neon-blue);
+    padding: 20px;
+    border-radius: 15px; text-align: center; transition: 0.3s; }
+  .music-card:hover { transform: translateY(-10px); background: rgba(0, 255, 255, 0.1); box-shadow: 0 0 20px var(--neon-blue); }
+  .music-icon { font-size: 3rem; margin-bottom: 10px; display: block; }
+  .band-name { font-weight: bold; color: var(--neon-pink); margin-bottom: 5px; display: block; }
+  .song-name { font-style: italic; color: #fff; font-size: 0.9rem; }
+  /* --- NOWY STYL DLA YOUTUBE (GRID WIDEO) --- */
+  .yt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0; }
+  .yt-thumb { background: #222; height: 150px; border-radius: 10px; position: relative; border: 2px solid #444; display: flex; align-items: center; justify-content: center; color: #666; cursor: pointer; transition: 0.3s; text-decoration: none; }
+  .yt-thumb:hover { border-color: var(--neon-pink); color: var(--neon-pink); box-shadow: 0 0 15px var(--neon-pink); }
+  .play-icon { font-size: 3rem; }
+  .yt-label { font-size:0.8rem; position:absolute; bottom:10px; color: inherit; }
+  /* --- RESPONSYWNOŚĆ --- */
+  @media (max-width: 900px) {
+    body { flex-direction: column; }
+    #sidebar { position: relative; width: 100%; height: auto; border-left: none; border-bottom: 2px solid var(--neon-blue); flex-direction: row; flex-wrap: wrap; justify-content: center; }
+    #content-area { width: 100%; margin-right: 0; padding: 20px; }
+    .nav-btn { font-size: 0.8rem; padding: 8px; }
+    h1 { font-size: 2.2rem; }
+  }
+  /* ====== (2) AI & Web Development – karta obrotowa ====== */
+  .flip-card { perspective: 1200px; max-width: 1000px; margin: 0 auto 20px; }
+  .flip-inner { position: relative; width: 100%; min-height: 320px; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(.2,.8,.2,1); }
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+  .flip-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 20px; overflow: hidden; }
+  .flip-front { display: flex; align-items: center; justify-content: center; background: transparent; }
+  .flip-back { transform: rotateY(180deg); background: var(--glass-bg); border: 1px solid var(--neon-blue); box-shadow: 0 0 25px rgba(0,255,255,0.25) inset; padding: 22px 24px; overflow-y: auto; }
+  .flip-hint { text-align:center; font-size:0.9rem; color:#aaa; margin-bottom:8px; }
+  .flip-clickable { cursor: pointer; }
+  /* ====== (3) Kalimba – 3 okrągłe przyciski z neonem ====== */
+  .kalimba-pads { display:flex; gap:22px; justify-content:center; margin:24px 0 8px; }
+  .kalimba-btn { width:90px; height:90px; border-radius:50%; border:2px solid var(--neon-pink); background: radial-gradient(ellipse at center, rgba(255,0,255,0.15), rgba(0,0,0,0.6)); box-shadow: 0 0 14px rgba(255,0,255,0.35), inset 0 0 18px rgba(255,0,255,0.15); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; letter-spacing:1px; cursor:pointer; transition: transform .08s ease, box-shadow .25s ease, border-color .25s ease; user-select:none; }
+  .kalimba-btn:hover { border-color: #fff; box-shadow: 0 0 22px rgba(255,0,255,0.65), 0 0 34px rgba(0,255,255,0.35); }
+  .kalimba-btn:active { transform: scale(0.96); }
+  .kalimba-btn.blue { border-color: var(--neon-blue); box-shadow: 0 0 14px rgba(0,255,255,0.35), inset 0 0 18px rgba(0,255,255,0.15); }
+  .kalimba-btn.green { border-color: var(--neon-green); box-shadow: 0 0 14px rgba(0,255,0,0.35), inset 0 0 18px rgba(0,255,0,0.15); }
+  /* ====== (11) Język Niemiecki – mała tabela słówek ====== */
+  .vocab-table { width: 100%; border-collapse: collapse; margin: 16px 0 6px; background: rgba(255,255,255,0.03); border: 1px solid var(--neon-purple); box-shadow: 0 0 18px rgba(157,0,255,0.25); border-radius: 10px; overflow: hidden; }
+  .vocab-table th, .vocab-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.08); text-align: left; }
+  .vocab-table th { color:#fff; background: rgba(157,0,255,0.15); }
+  .vocab-table tr:hover { background: rgba(157,0,255,0.10); }
+  /* ====== (9) Sport – neonowe okno z hantlą do rzucania ====== */
+  .playground-wrap { margin: 18px 0 6px; }
+  .playground-title { font-size:1rem; color:#aaa; margin-bottom:8px; }
+  .playground { position: relative; width: 100%; max-width: 520px; height: 240px; margin: 0 auto; border-radius: 14px; background: radial-gradient(circle at 30% 30%, rgba(0,255,255,0.06), rgba(255,0,255,0.05) 45%, transparent 70%), rgba(255,255,255,0.03); border: 1px solid var(--neon-pink); box-shadow: 0 0 18px rgba(255,0,255,0.35), inset 0 0 22px rgba(0,255,255,0.08); overflow: hidden; backdrop-filter: blur(2px); }
+  .dumbbell { position: absolute; width: 120px; height: 26px; left: 40px; top: 40px; cursor: grab; transform: translate3d(0,0,0); }
+  .dumbbell:active { cursor: grabbing; }
+  .bell-bar { position:absolute; left:18px; right:18px; top:10px; height:6px; background:#cfcfcf; box-shadow: 0 0 8px rgba(255,255,255,0.35) inset; border-radius:3px; }
+  .bell { position:absolute; top:0; width:18px; height:26px; background:#888; border:1px solid #aaa; box-shadow: 0 0 8px rgba(0,255,255,0.25); }
+  .bell.left { left:0; border-radius:6px 2px 2px 6px; }
+  .bell.right { right:0; border-radius:2px 6px 6px 2px; }
+  /* === [ADDON: NEON TOOLS & WIDGETS v3] =============================== */
+  .neon-box { border: 1px solid var(--neon-blue); box-shadow: 0 0 18px rgba(0,255,255,0.25), inset 0 0 22px rgba(255,0,255,0.08); border-radius: 14px; background: rgba(255,255,255,0.03); }
+  .neon-btn { background: transparent; color: #fff; border: 1px solid var(--neon-pink); padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: .2s; text-transform: uppercase; letter-spacing: .5px; box-shadow: 0 0 12px rgba(255,0,255,0.25); }
+  .neon-btn:hover { background: var(--neon-pink); box-shadow: 0 0 16px var(--neon-pink); }
+  .neon-btn.alt { border-color: var(--neon-blue); box-shadow: 0 0 12px rgba(0,255,255,0.25); }
+  .neon-btn.alt:hover { background: var(--neon-blue); box-shadow: 0 0 16px var(--neon-blue); }
+  /* Drawing */
+  .neon-draw { margin: 18px 0 6px; }
+  #drawCanvas { width: 100%; height: 360px; display: block; border-radius: 14px; border: 1px solid var(--neon-purple); box-shadow: 0 0 18px rgba(157,0,255,0.35), inset 0 0 22px rgba(0,255,255,0.08); background: rgba(0,0,0,0.35); touch-action: none; }
+  .draw-ui { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
+  .draw-ui .size-label { font-size: .85rem; color: #aaa; }
+  /* Magnifier */
+  .neon-lens { position: absolute; pointer-events: none; width: 140px; height: 140px; border-radius: 50%; border: 2px solid var(--neon-green); box-shadow: 0 0 18px rgba(0,255,0,0.55), inset 0 0 22px rgba(0,255,255,0.15); background-repeat: no-repeat; opacity: 0; transition: opacity .15s ease; z-index: 5; }
+  .magnify-wrap { position: relative; display: inline-block; }
+  /* Mini-game */
+  .neon-game { margin: 18px auto 6px; max-width: 520px; }
+  #neonGame { width: 100%; height: 260px; display: block; border-radius: 14px; border: 1px solid var(--neon-blue); box-shadow: 0 0 18px rgba(0,255,255,0.35), inset 0 0 22px rgba(255,0,255,0.08); background: radial-gradient(ellipse at 30% 30%, rgba(0,255,255,0.06), rgba(255,0,255,0.05) 45%, transparent 70%), #060606; }
+  .game-ui { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px; margin-top: 8px; }
+  .game-score, .game-lives { font-size:.95rem; color:#ccc; }
+  .game-hint { text-align:center; font-size:.85rem; color:#888; margin-top:6px; }
+  .game-ctrls { display:flex; gap:8px; }
+
+  /***** (6) Psychologia – Mindfulness (breathing) *****/
+  .mindfulness { margin: 18px 0 10px; }
+  .mindfulness .inner { padding: 16px 16px 14px; }
+  .mind-circle {
+    width: 180px; height: 180px; margin: 10px auto; border-radius: 50%;
+    border: 2px solid var(--neon-blue);
+    box-shadow: 0 0 22px rgba(0,255,255,0.45), inset 0 0 22px rgba(255,0,255,0.10);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; letter-spacing: 1px; text-shadow: 0 0 8px var(--neon-pink);
+    transform: scale(0.82);
+    transition: transform 4s cubic-bezier(.2,.8,.2,1);
+  }
+  .mind-circle.grow   { transform: scale(1.18); }
+  .mind-circle.shrink { transform: scale(0.82); }
+  .mind-ui { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; margin: 8px 0; }
+  .mind-ui label { font-size: .9rem; color: #aaa; }
+  .mind-hint { text-align: center; margin-top: 4px; }
+  .mind-hint span { font-size: .85rem; color: #888; }
+  </style>
+</head>
+<body>
+  <!-- OBSZAR TREŚCI -->
+  <main id="content-area">
+    <!-- 1. STRONA GŁÓWNA -->
+    <section id="home" class="active">
+      <h1 class="lang-pl">Moje Neonowe Portfolio</h1>
+      <h1 class="lang-en" style="display:none">My Neon Portfolio</h1>
+      <div class="media-container">
+        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1000&q=80" alt="Cyberpunk City">
+      </div>
+      <p class="lang-pl">Witaj w mojej cyfrowej przestrzeni. Strona ta jest odzwierciedleniem mojej osobowości – połączeniem technologii, sztuki i głębokich przemyśleń. Zaprojektowałem ją w stylu "Cyberpunk Neon", ponieważ uwielbiam futurystyczne klimaty, ciemne tła i jaskrawe, kontrastujące kolory. Znajdziesz tutaj zbiór wszystkiego, co sprawia, że wstaję rano z łóżka. To nie jest zwykłe CV, to mapa mojego umysłu.</p>
+      <p class="lang-pl">W menu po prawej stronie (lub na dole, jeśli jesteś na telefonie) przygotowałem dla Ciebie zestawienie moich największych pasji. Każda z nich jest dla mnie równie ważna. Od spokojnych dźwięków Kalimby, przez ciężkie brzmienia metalowe, aż po analizę ludzkiej psychiki i fascynację sztuczną inteligencją. Chcę pokazać, że technologia i humanizm mogą iść w parze, tworząc coś wyjątkowego.</p>
+      <p class="lang-pl">Zachęcam Cię do klikania w poszczególne zakładki. Przygotowałem tam szczegółowe opisy, zdjęcia i wizualizacje. Niezależnie od tego, czy interesujesz się programowaniem, sportem, czy po prostu szukasz inspiracji – mam nadzieję, że znajdziesz tu coś dla siebie. Rozgość się w moim neonowym świecie.</p>
+      <p class="lang-en" style="display:none">Welcome to my digital space. This site is a reflection of my personality – a combination of technology, art, and deep thoughts. I designed it in the "Cyberpunk Neon" style because I love futuristic atmospheres, dark backgrounds, and bright, contrasting colors. Here you will find a collection of everything that makes me get out of bed in the morning. This is not just a CV, it's a map of my mind.</p>
+      <p class="lang-en" style="display:none">In the menu on the right (or at the bottom if you are on a phone), I have prepared a list of my greatest passions. Each of them is equally important to me. From the calm sounds of the Kalimba, through heavy metal sounds, to the analysis of the human psyche and fascination with artificial intelligence. I want to show that technology and humanism can go hand in hand, creating something unique.</p>
+      <p class="lang-en" style="display:none">I encourage you to click on the individual tabs. I have prepared detailed descriptions, photos, and visualizations there. Whether you are interested in programming, sports, or just looking for inspiration – I hope you find something for yourself here. Make yourself at home in my neon world.</p>
+    </section>
+
+    <!-- 2. AI WEB DEV -->
+    <section id="ai-web">
+      <h2 class="lang-pl">AI & Web Development</h2>
+      <h2 class="lang-en" style="display:none">AI & Web Development</h2>
+      <!-- KARTA OBROTOWA: kliknij obraz, aby odwrócić i zobaczyć tekst -->
+      <div class="flip-card" id="aiFlipCard">
+        <div class="flip-inner">
+          <div class="flip-face flip-front flip-clickable" id="aiFlipFront" aria-label="Kliknij, aby odwrócić">
+            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1000&q=80" alt="Matrix Code">
+          </div>
+          <div class="flip-face flip-back" id="aiFlipBack">
+            <div class="flip-hint">↺ Kliknij w kartę, aby wrócić</div>
+            <div class="lang-pl">
+              <p>Tworzenie stron internetowych to dla mnie coś więcej niż tylko pisanie kodu w HTML i CSS. To proces twórczy, w którym pusta strona zamienia się w interaktywne doświadczenie. Jednak moją największą pasją w tym obszarze jest wykorzystanie Sztucznej Inteligencji (AI) jako narzędzia wspomagającego. W dzisiejszych czasach programista, który nie korzysta z AI, zostaje w tyle. Modele językowe pomagają mi optymalizować algorytmy, generować szablony i szukać błędów w rekordowym tempie.</p>
+              <p>Fascynuje mnie przyszłość internetu. Wyobrażam sobie strony, które same dostosowują się do użytkownika w czasie rzeczywistym, generowane przez zaawansowane sieci neuronowe. Uczę się prompt engineeringu, aby efektywnie komunikować się z AI i tworzyć rzeczy, które kiedyś zajmowałyby tygodnie, w zaledwie kilka godzin. To daje mi ogromną swobodę kreatywną – mogę skupić się na designie i "duszy" strony, podczas gdy AI zajmuje się rzemieślniczą robotą.</p>
+              <p>Moim celem jest opanowanie łączenia tradycyjnych technologii webowych (JavaScript, React) z API modeli generatywnych. Wierzę, że ta symbioza człowieka i maszyny to przyszłość branży IT. Każdy projekt, taki jak ta strona, to poligon doświadczalny, gdzie testuję nowe możliwości współpracy z cyfrowym asystentem.</p>
+            </div>
+            <div class="lang-en" style="display:none">
+              <p>Web development is for me more than just writing code in HTML and CSS. It is a creative process where a blank page turns into an interactive experience. However, my biggest passion in this area is using Artificial Intelligence (AI) as a supporting tool. Nowadays, a programmer who does not use AI is left behind. Language models help me optimize algorithms, generate templates, and find bugs at record speed.</p>
+              <p>I am fascinated by the future of the Internet. I imagine websites that adapt to the user in real-time, generated by advanced neural networks. I am learning prompt engineering to effectively communicate with AI and create things that used to take weeks in just a few hours. This gives me enormous creative freedom – I can focus on the design and "soul" of the site while AI takes care of the craftsmanship.</p>
+              <p>My goal is to master combining traditional web technologies (JavaScript, React) with generative model APIs. I believe that this symbiosis of man and machine is the future of the IT industry. Every project, like this website, is a testing ground where I test new possibilities of cooperation with a digital assistant.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flip-hint">Kliknij w obraz, aby zobaczyć opis ▼</div>
+    </section>
+
+    <!-- 3. KALIMBA -->
+    <section id="kalimba">
+      <h2 class="lang-pl">Kalimba: Dźwięki Spokoju</h2>
+      <h2 class="lang-en" style="display:none">Kalimba: Sounds of Peace</h2>
+      <div class="media-container">
+        <img src="https://images.unsplash.com/photo-1621342618288-c89396d19477?auto=format&fit=crop&w=1000&q=80" alt="Kalimba Instrument">
+        <!-- DODANE DRUGIE ZDJĘCIE -->
+        <img src="https://images.unsplash.com/photo-1596205826019-2785d1170941?auto=format&fit=crop&w=1000&q=80" alt="Playing Kalimba in Nature">
+      </div>
+      <!-- Trzy okrągłe przyciski dźwiękowe (neon) -->
+      <div class="kalimba-pads" aria-label="Kalimba pads">
+        <div class="kalimba-btn" data-note="A4">A</div>
+        <div class="kalimba-btn blue" data-note="C5">C</div>
+        <div class="kalimba-btn green" data-note="E5">E</div>
+      </div>
+      <p class="lang-pl">Kalimba, często nazywana "pianinem kciukowym" (thumb piano), to instrument, który odkryłem przypadkiem, ale zakochałem się w nim od pierwszego dźwięku. Pochodzi z Afryki i charakteryzuje się niezwykle ciepłym, wibrującym i relaksującym brzmieniem. W świecie pełnym hałasu, powiadomień i stresu, kalimba jest moją oazą spokoju. Kiedy biorę ją do ręki, czas zwalnia.</p>
+      <p class="lang-pl">Gra na kalimbie nie wymaga lat studiów w konserwatorium muzycznym, co czyni ją instrumentem bardzo wdzięcznym. Polega na szarpaniu metalowych blaszek kciukami. Mimo swojej prostoty, pozwala na wydobycie niesamowitych melodii – od prostych kołysanek po skomplikowane aranżacje utworów popowych czy filmowych. Uwielbiam uczyć się nowych piosenek z tutoriali na YouTube, przepisując je na system tabulatur cyfrowych.</p>
+      <p class="lang-pl">Dla mnie to forma medytacji. Skupienie na wibracji drewna i czystości dźwięku pozwala mi oczyścić umysł po ciężkim dniu. Często zabieram kalimbę ze sobą na łono natury – gra w lesie lub nad jeziorem, gdzie dźwięk niesie się w ciszy, to magiczne doświadczenie. To hobby uczy mnie, że piękno tkwi w prostocie i małych rzeczach.</p>
+      <p class="lang-en" style="display:none">The Kalimba, often called the "thumb piano", is an instrument I discovered by chance, but fell in love with from the first sound. It originates from Africa and is characterized by an extremely warm, vibrating, and relaxing sound. In a world full of noise, notifications, and stress, the kalimba is my oasis of peace. When I pick it up, time slows down.</p>
+      <p class="lang-en" style="display:none">Playing the kalimba does not require years of study at a music conservatory, which makes it a very grateful instrument. It involves plucking metal tines with your thumbs. Despite its simplicity, it allows for producing amazing melodies – from simple lullabies to complicated arrangements of pop or movie songs. I love learning new songs from YouTube tutorials, transcribing them into a digital tab system.</p>
+      <p class="lang-en" style="display:none">For me, it is a form of meditation. Focusing on the vibration of the wood and the purity of the sound allows me to clear my mind after a hard day. I often take the kalimba with me to nature – playing in the forest or by the lake, where the sound carries in silence, is a magical experience. This hobby teaches me that beauty lies in simplicity and small things.</p>
+    </section>
+
+    <!-- 4. RYSOWANIE -->
+    <section id="drawing">
+      <h2 class="lang-pl">Rysowanie i Kreatywność</h2>
+      <h2 class="lang-en" style="display:none">Drawing & Creativity</h2>
+      <div class="media-container">
+        <img src="https://images.unsplash.com/photo-1544830211-df632ef46a38?auto=format&fit=crop&w=1000&q=80" alt="Sketching Art">
+        <!-- DODANE DRUGIE ZDJĘCIE -->
+        <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=1000&q=80" alt="Colored Pencils and Art">
+      </div>
+      <!-- [ADDON v3] Neon Drawing Canvas -->
+      <div class="neon-draw">
+        <canvas id="drawCanvas" aria-label="Neonowy rysunek / Neon drawing canvas"></canvas>
+        <div class="draw-ui">
+          <button class="neon-btn" data-tool="pen" id="toolPen"><span class="lang-pl">Neonowy pędzel</span><span class="lang-en" style="display:none">Neon brush</span></button>
+          <button class="neon-btn alt" data-tool="eraser" id="toolEraser"><span class="lang-pl">Gumka</span><span class="lang-en" style="display:none">Eraser</span></button>
+          <span class="size-label"><span class="lang-pl">Rozmiar</span><span class="lang-en" style="display:none">Size</span></span>
+          <input type="range" id="drawSize" min="2" max="40" value="12" />
+        </div>
+      </div>
+      <!-- [/ADDON] -->
+      <p class="lang-pl">Rysowanie towarzyszy mi od dziecka. Zaczynało się od bazgrania po marginesach zeszytów, a przerodziło się w jedną z moich głównych form ekspresji. To niesamowite uczucie, gdy biała kartka (lub pusty plik w programie graficznym) zaczyna wypełniać się kształtami, które wcześniej istniały tylko w mojej głowie. Rysowanie pozwala mi zwizualizować moje sny, marzenia i lęki.</p>
+      <p class="lang-pl">Interesuję się zarówno rysunkiem tradycyjnym (ołówek, cienkopis), jak i cyfrowym (tablet graficzny). Lubię tworzyć postacie w stylu fantasy i sci-fi, inspirowane grami i filmami, które oglądam. Często szkicuję koncepcje do moich projektów stron internetowych – uważam, że umiejętność rysowania bardzo pomaga w designie UI/UX, bo uczy kompozycji, teorii kolorów i proporcji.</p>
+      <p class="lang-pl">Nie uważam się za profesjonalistę, ale w rysowaniu najważniejszy jest dla mnie proces, a nie tylko efekt końcowy. To moment, w którym wyłączam myślenie analityczne i włączam czystą wyobraźnię. Staram się codziennie narysować choćby mały szkic, aby trenować rękę i oko. To hobby uczy cierpliwości – jeden dobry rysunek potrafi zająć wiele godzin, ale satysfakcja po jego ukończeniu jest bezcenna.</p>
+      <p class="lang-en" style="display:none">Drawing has been with me since I was a child. It started with scribbling on the margins of notebooks and turned into one of my main forms of expression. It's an amazing feeling when a white sheet (or an empty file in a graphics program) begins to fill with shapes that previously existed only in my head. Drawing allows me to visualize my dreams, desires, and fears.</p>
+      <p class="lang-en" style="display:none">I am interested in both traditional drawing (pencil, fineliner) and digital (graphics tablet). I like creating fantasy and sci-fi characters, inspired by games and movies I watch. I often sketch concepts for my website projects – I believe that drawing skills help a lot in UI/UX design because it teaches composition, color theory, and proportions.</p>
+      <p class="lang-en" style="display:none">I don't consider myself a professional, but in drawing, the most important thing for me is the process, not just the final result. It is a moment when I turn off analytical thinking and turn on pure imagination. I try to draw at least a small sketch every day to train my hand and eye. This hobby teaches patience – one good drawing can take many hours, but the satisfaction after finishing it is priceless.</p>
+    </section>
+
+    <!-- 5. MUZYKA (NOWY WYGLĄD) -->
+    <section id="music">
+      <h2 class="lang-pl">Muzyka: Energia i Emocje</h2>
+      <h2 class="lang-en" style="display:none">Music: Energy & Emotions</h2>
+      <p class="lang-pl">Muzyka nie jest dla mnie tylko tłem; jest siłą napędową. Słucham głównie Rocka i Metalu, ponieważ te gatunki najlepiej rezonują z moją energią. Ciężkie riffy gitarowe, mocna perkusja i charyzmatyczny wokal dają mi "kopa" do działania, czy to na siłowni, czy podczas kodowania. Oto moi absolutni faworyci przedstawieni w formie kart:</p>
+      <p class="lang-en" style="display:none">Music is not just background noise for me; it is a driving force. I mainly listen to Rock and Metal because these genres resonate best with my energy. Heavy guitar riffs, strong drums, and charismatic vocals give me a "kick" to act, whether at the gym or while coding. Here are my absolute favorites presented as cards:</p>
+      <div class="music-grid">
+        <div class="music-card">
+          <span class="music-icon">🦂</span>
+          <span class="band-name">Scorpions</span>
+          <span class="song-name">"Still Loving You", "Rock You Like a Hurricane"</span>
+          <p style="font-size: 0.8rem; margin-top:10px;">Klasyka rocka. Ich ballady potrafią wzruszyć do łez, a szybsze kawałki porywają tłumy.</p>
+        </div>
+        <div class="music-card">
+          <span class="music-icon">⚡</span>
+          <span class="band-name">Metallica</span>
+          <span class="song-name">"Master of Puppets", "Nothing Else Matters"</span>
+          <p style="font-size: 0.8rem; margin-top:10px;">Absolutna legenda Thrash Metalu. Agresja połączona z niesamowitą techniką.</p>
+        </div>
+        <div class="music-card">
+          <span class="music-icon">🧡</span>
+          <span class="band-name">Korol i Shut</span>
+          <span class="song-name">"Kukla Kolduna", "Lesnik"</span>
+          <p style="font-size: 0.8rem; margin-top:10px;">Horror Punk z fabułą. Każda piosenka to mała opowieść grozy lub baśń.</p>
+        </div>
+        <div class="music-card">
+          <span class="music-icon">🔥</span>
+          <span class="band-name">Godsmack</span>
+          <span class="song-name">"I Stand Alone", "Voodoo"</span>
+          <p style="font-size: 0.8rem; margin-top:10px;">Idealni na trening. Mocny, rytmiczny metal, który daje nieskończoną energię.</p>
+        </div>
+      </div>
+      <br>
+      <p class="lang-pl">Muzyka pomaga mi regulować emocje. Kiedy jestem smutny, słucham ballad Scorpions. Kiedy potrzebuję motywacji, włączam Metallicę. Z kolei "Korol i Shut" to dla mnie podróż do świata fantazji – ich teksty są jak mroczne bajki braci Grimm, tylko wyśpiewane przy akompaniamencie gitar elektrycznych i skrzypiec. Nie wyobrażam sobie życia w ciszy.</p>
+      <p class="lang-en" style="display:none">Music helps me regulate my emotions. When I am sad, I listen to Scorpions ballads. When I need motivation, I turn on Metallica. On the other hand, "Korol i Shut" is a journey into the world of fantasy for me – their lyrics are like dark tales of the Brothers Grimm, only sung to the accompaniment of electric guitars and violins. I cannot imagine living in silence.</p>
+    </section>
+
+    <!-- 6. PSYCHOLOGIA -->
+    <section id="psychology">
+      <h2 class="lang-pl">Psychologia: Zrozumienie</h2>
+      <h2 class="lang-en" style="display:none">Psychology: Understanding</h2>
+      <div class="media-container">
+        <!-- DODANE ZDJĘCIE KSIĄŻEK / MÓZGU -->
+        <img src="https://images.unsplash.com/photo-1491841550275-ad7854e35ca6?auto=format&fit=crop&w=1000&q=80" alt="Psychology Books Learning">
+      </div>
+
+      <!-- Mindfulness (Neon Breathing) -->
+      <div class="mindfulness neon-box" id="mindfulness">
+        <div class="inner">
+          <h3 class="lang-pl" style="margin-bottom:6px;color:var(--neon-blue);">Mindfulness (oddech)</h3>
+          <h3 class="lang-en" style="margin-bottom:6px;color:var(--neon-blue);display:none">Mindfulness (breathing)</h3>
+
+          <div class="mind-circle" id="mindCircle" aria-live="polite" aria-label="Mindfulness circle">
+            <span id="mindLabel">Przygotuj się</span>
+          </div>
+
+          <div class="mind-ui" role="group" aria-label="Mindfulness controls">
+            <label for="mindMinutes" class="lang-pl">Czas:</label>
+            <label for="mindMinutes" class="lang-en" style="display:none">Time:</label>
+            <select id="mindMinutes" class="neon-btn alt" style="padding:6px 10px;">
+              <option value="1">1 min</option>
+              <option value="3">3 min</option>
+              <option value="5">5 min</option>
+            </select>
+            <button class="neon-btn" id="mindStart">▶ Start</button>
+            <button class="neon-btn alt" id="mindStop">■ Stop</button>
+          </div>
+
+          <div class="mind-hint">
+            <span class="lang-pl">Wskazówka: koło rośnie przy wdechu, kurczy się przy wydechu. Oddychaj spokojnie.</span>
+            <span class="lang-en" style="display:none">Tip: the circle grows on inhale and shrinks on exhale. Breathe gently.</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="lang-pl">Zawsze zastanawiałem się, co kieruje ludźmi. Dlaczego podejmujemy takie, a nie inne decyzje? Dlaczego czujemy strach, radość, złość? Psychologia daje odpowiedzi na te pytania. Czytanie książek z tej dziedziny to dla mnie sposób na "hakowanie" rzeczywistości. Kiedy rozumiesz mechanizmy rządzące ludzkim umysłem, łatwiej jest nawiązywać relacje, rozwiązywać konflikty i radzić sobie z własnym stresem.</p>
+      <p class="lang-pl">Szczególnie interesuję się psychologią behawioralną oraz mową ciała. Wiedza o tym, jak odczytywać niewerbalne sygnały, jest jak posiadanie supermocy w codziennym życiu. Pomaga mi to nie tylko w kontaktach towarzyskich, ale także w rozumieniu samego siebie – moich reakcji i nawyków. Staram się wdrażać tezę, że "zrozumieć to wybaczyć" – wiedząc, skąd biorą się zachowania innych, łatwiej o empatię.</p>
+      <p class="lang-pl">Moja biblioteczka stale się powiększa o pozycje dotyczące inteligencji emocjonalnej, wpływu społecznego i neurobiologii. Uważam, że w erze technologii, zrozumienie "systemu operacyjnego" człowieka jest ważniejsze niż kiedykolwiek. To pasja, która rozwija mnie jako człowieka, a nie tylko jako pracownika czy studenta.</p>
+      <p class="lang-en" style="display:none">I always wondered what drives people. Why do we make these decisions and not others? Why do we feel fear, joy, anger? Psychology provides answers to these questions. Reading books in this field is a way for me to "hack" reality. When you understand the mechanisms governing the human mind, it is easier to build relationships, resolve conflicts, and deal with your own stress.</p>
+      <p class="lang-en" style="display:none">I am particularly interested in behavioral psychology and body language. Knowing how to read non-verbal signals is like having a superpower in everyday life. It helps me not only in social contacts but also in understanding myself – my reactions and habits. I try to implement the thesis that "to understand is to forgive" – knowing where other people's behaviors come from makes empathy easier.</p>
+      <p class="lang-en" style="display:none">My library is constantly growing with items regarding emotional intelligence, social influence, and neurobiology. I believe that in the era of technology, understanding the human "operating system" is more important than ever. It is a passion that develops me as a human being, not just as an employee or student.</p>
+    </section>
+
+    <!-- 7. YOUTUBE -->
+    <section id="youtube">
+      <h2 class="lang-pl">YouTube: Moja Telewizja</h2>
+      <h2 class="lang-en" style="display:none">YouTube: My TV</h2>
+      <p class="lang-pl">Dla mnie tradycyjna telewizja już nie istnieje. YouTube to moje okno na świat, uniwersytet i kino w jednym. Spędzam tam dużo czasu, ale staram się dobierać treści świadomie. Nie oglądam byle czego – subskrybuję kanały, które wnoszą wartość do mojego życia. To niesamowite, że za darmo mamy dostęp do wiedzy ekspertów z całego świata.</p>
+      <!-- MAKIETA SIATKI WIDEO (TERAZ LINKI) -->
+      <div class="yt-grid">
+        <a href="https://www.youtube.com/results?search_query=programming+ai" target="_blank" class="yt-thumb">
+          <span class="play-icon">▶</span>
+          <span class="yt-label">Programowanie & AI</span>
+        </a>
+        <a href="https://www.youtube.com/results?search_query=music+covers" target="_blank" class="yt-thumb">
+          <span class="play-icon">▶</span>
+          <span class="yt-label">Muzyczne Covery</span>
+        </a>
+        <a href="https://www.youtube.com/results?search_query=game+reviews" target="_blank" class="yt-thumb">
+          <span class="play-icon">▶</span>
+          <span class="yt-label">Recenzje Gier</span>
+        </a>
+        <a href="https://www.youtube.com/results?search_query=learn+german" target="_blank" class="yt-thumb">
+          <span class="play-icon">▶</span>
+          <span class="yt-label">Nauka Niemieckiego</span>
+        </a>
+      </div>
+      <p class="lang-pl">Oglądam bardzo zróżnicowane treści. Z jednej strony są to tutoriale programistyczne (np. freeCodeCamp, Fireship), które pomagają mi w nauce zawodu. Z drugiej strony uwielbiam wideo-eseje na temat filmów, gier i kultury. YouTube to także miejsce, gdzie szukam inspiracji muzycznych – odkrywam nowe zespoły metalowe i słucham wirtuozów kalimby.</p>
+      <p class="lang-pl">Cenię twórców autentycznych, którzy mają pasję. Oglądanie kogoś, kto z zaangażowaniem opowiada o swoim hobby (czy to renowacja starych konsol, czy gotowanie, czy historia starożytna), jest niezwykle inspirujące. YouTube pozwala mi też śledzić nowinki technologiczne – recenzje sprzętu, newsy o AI. To platforma, która nigdy nie śpi i zawsze ma coś nowego do zaoferowania.</p>
+      <p class="lang-en" style="display:none">For me, traditional television no longer exists. YouTube is my window to the world, university, and cinema in one. I spend a lot of time there, but I try to choose content consciously. I don't watch just anything – I subscribe to channels that add value to my life. It's amazing that we have free access to the knowledge of experts from around the world.</p>
+      <p class="lang-en" style="display:none">I watch very diverse content. On the one hand, there are programming tutorials that help me learn the trade. On the other hand, I love video essays about movies, games, and culture. YouTube is also a place where I look for musical inspiration – I discover new metal bands and listen to kalimba virtuosos.</p>
+      <p class="lang-en" style="display:none">I value authentic creators who have passion. Watching someone who talks about their hobby with commitment (whether it's renovating old consoles, cooking, or ancient history) is extremely inspiring. YouTube also allows me to follow technological news – hardware reviews, AI news. It is a platform that never sleeps and always has something new to offer.</p>
+    </section>
+
+    <!-- 8. GRY -->
+    <section id="gaming">
+      <h2 class="lang-pl">Gry Komputerowe</h2>
+      <h2 class="lang-en" style="display:none">Computer Games</h2>
+      <div class="media-container">
+        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1000&q=80" alt="Gaming Setup Neon">
+      </div>
+      <!-- [ADDON v3] Neon Mini-Game (Easy Catch) -->
+      <div class="neon-game">
+        <canvas id="neonGame" width="520" height="260"></canvas>
+        <div class="game-ui">
+          <div class="game-ctrls">
+            <button class="neon-btn" id="btnLeft" aria-label="Lewo / Left">←</button>
+            <button class="neon-btn" id="btnRight" aria-label="Prawo / Right">→</button>
+          </div>
+          <button id="gameStart" class="neon-btn alt">▶ Start</button>
+          <span class="game-score"><span class="lang-pl">Wynik:</span><span class="lang-en" style="display:none">Score:</span> <b id="gameScore">0</b></span>
+          <span class="game-lives"><span class="lang-pl">Życia:</span><span class="lang-en" style="display:none">Lives:</span> <b id="gameLives">3</b></span>
+        </div>
+        <div class="game-hint"><span class="lang-pl">Sterowanie: ← → lub przyciski. Cel: zbieraj niebieskie sfery, unikaj purpurowych bloków.</span><span class="lang-en" style="display:none">Controls: ← → or on-screen buttons. Goal: collect blue orbs, avoid purple blocks.</span></div>
+      </div>
+      <!-- [/ADDON] -->
+      <p class="lang-pl">Gry komputerowe to dla mnie najważniejsze medium XXI wieku. To połączenie filmu, literatury, muzyki i interakcji. Kiedy gram, nie jestem tylko biernym obserwatorem – jestem bohaterem. Gry RPG (Role Playing Games) pozwalają mi przeżyć historie, które w rzeczywistości są niemożliwe. Mogę być wiedźminem polującym na potwory, żołnierzem w kosmosie albo zarządcą wielkiego miasta.</p>
+      <p class="lang-pl">Ale gry to nie tylko eskapizm. Gry wieloosobowe nauczyły mnie komunikacji, pracy zespołowej i szybkiego podejmowania decyzji pod presją. Kiedy grasz w drużynie, musisz polegać na innych i brać odpowiedzialność za swoje błędy. To umiejętności, które przydają się w życiu zawodowym. Poza tym, gry rozwijają koordynację ręka-oko i refleks, co udowodniono naukowo.</p>
+      <p class="lang-pl">Uwielbiam też aspekt technologiczny gamingu. Śledzę rozwój kart graficznych, silników gier (jak Unreal Engine 5) i wirtualnej rzeczywistości. Budowanie własnego komputera, dobieranie podzespołów, dbanie o odpowiednie chłodzenie i oświetlenie LED – to hobby samo w sobie. Mój pokój gracza to moja świątynia, gdzie mogę się odciąć od problemów i po prostu dobrze bawić.</p>
+      <p class="lang-en" style="display:none">Computer games are for me the most important medium of the 21st century. It is a combination of film, literature, music, and interaction. When I play, I am not just a passive observer – I am the hero. RPGs (Role Playing Games) allow me to experience stories that are impossible in reality. I can be a witcher hunting monsters, a soldier in space, or a manager of a big city.</p>
+      <p class="lang-en" style="display:none">But games are not just escapism. Multiplayer games taught me communication, teamwork, and quick decision-making under pressure. When you play on a team, you have to rely on others and take responsibility for your mistakes. These are skills that are useful in professional life. Besides, games develop hand-eye coordination and reflexes.</p>
+      <p class="lang-en" style="display:none">I also love the technological aspect of gaming. I follow the development of graphics cards, game engines (like Unreal Engine 5), and virtual reality. Building my own computer, choosing components, taking care of proper cooling and LED lighting – it's a hobby in itself. My gamer room is my temple where I can cut myself off from problems and just have fun.</p>
+    </section>
+
+    <!-- 9. SPORT -->
+    <section id="sport">
+      <h2 class="lang-pl">Sport: Ciało i Umysł</h2>
+      <h2 class="lang-en" style="display:none">Sport: Body & Mind</h2>
+      <div class="media-container">
+        <!-- ZDJĘCIE ZAMIAST PLACEHOLDERA -->
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=80" alt="Gym Workout Weights">
+      </div>
+      <p class="lang-pl">W świecie, w którym spędzam większość czasu przed komputerem (programując lub grając), sport jest absolutną koniecznością. To mój sposób na zachowanie równowagi psychofizycznej. Siłownia (Gym) to dla mnie miejsce walki ze słabościami. Kiedy podnoszę ciężary, czuję, że mam kontrolę nad swoim ciałem. Każdy dodatkowy kilogram na sztandze to małe zwycięstwo nad lenistwem i wymówkami.</p>
+      <p class="lang-pl">Bieganie z kolei to mój czas na reset. Zakładam słuchawki, włączam Godsmacka i biegnę przed siebie. Wtedy przychodzą mi do głowy najlepsze pomysły. Endorfiny, które uwalniają się po treningu, działają lepiej niż jakakolwiek używka. Regularny wysiłek fizyczny sprawia, że mam więcej energii na naukę i pracę, lepiej śpię i jestem bardziej pewny siebie.</p>
+      <p class="lang-pl">Nie dążę do bycia olimpijczykiem, ale chcę być sprawny i zdrowy jak najdłużej. Sport uczy pokory – efekty nie przychodzą natychmiast, trzeba na nie zapracować miesiącami systematyczności. Ta lekcja przekłada się na inne dziedziny życia: naukę języków czy programowania. Konsekwencja jest kluczem do sukcesu wszędzie, nie tylko na bieżni.</p>
+      <p class="lang-en" style="display:none">In a world where I spend most of my time in front of a computer (coding or playing), sport is an absolute necessity. It is my way of maintaining psychophysical balance. The gym is a place for me to fight against weaknesses. When I lift weights, I feel like I have control over my body. Every extra kilogram on the barbell is a small victory over laziness and excuses.</p>
+      <p class="lang-en" style="display:none">Running, on the other hand, is my time for a reset. I put on headphones, turn on Godsmack, and run ahead. That's when the best ideas come to my mind. The endorphins released after a workout work better than any stimulant. Regular physical exertion gives me more energy for study and work, I sleep better, and I am more confident.</p>
+      <p class="lang-en" style="display:none">I don't aim to be an Olympian, but I want to be fit and healthy for as long as possible. Sport teaches humility – results do not come immediately, you have to earn them with months of consistency. This lesson translates into other areas of life: learning languages or programming. Consistency is the key to success everywhere, not just on the treadmill.</p>
+      <!-- Neonowe okno z interaktywną hantlą -->
+      <div class="playground-wrap">
+        <div class="playground-title">Neon Gym – złap i rzuć hantlą ⤵</div>
+        <div class="playground" id="gymPlayground" aria-label="Okno do zabawy hantlą">
+          <div class="dumbbell" id="dumbbell">
+            <div class="bell left"></div>
+            <div class="bell-bar"></div>
+            <div class="bell right"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. FOTOGRAFIA -->
+    <section id="photo">
+      <h2 class="lang-pl">Fotografia Przyrody</h2>
+      <h2 class="lang-en" style="display:none">Nature Photography</h2>
+      <div class="media-container">
+        <div class="magnify-wrap">
+          <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1000&q=80" alt="Nature Landscape" id="photoMain">
+          <!-- Lens created by script -->
+        </div>
+      </div>
+      <p class="lang-pl">Fotografia to sztuka patrzenia. Wielu ludzi przechodzi obok pięknych rzeczy obojętnie, z nosem w telefonie. Ja staram się dostrzegać magię w codzienności. Moim ulubionym tematem jest przyroda. Wychodzenie o świcie do lasu, kiedy mgła jeszcze unosi się nad łąkami, to mistyczne przeżycie. Próbuję uchwycić ten ulotny момент, grę światła i cienia na liściach, czy kroplę rosy na pajęczynie.</p>
+      <p class="lang-pl">Interesuje mnie zarówno makrofotografia (pokazywanie świata z bardzo bliska, np. owadów czy struktur roślin), jak i krajobraz. Aparat fotograficzny jest dla mnie wehikułem czasu – zdjęcie zrobione dzisiaj będzie pamiątką za 10, 20 lat. Pozwala mi wracać do miejsc i emocji, które już minęły. To też świetny powód, żeby wyjść z domu i podróżować.</p>
+      <p class="lang-pl">Uczę się obsługi manualnej aparatu – ISO, czas naświetlania, przysłona. To techniczna strona fotografii, która daje pełną kontrolę nad obrazem. Nie lubię polegać na trybie "Auto". Satysfakcja, gdy uda się zrobić idealnie ostre i doświetlone zdjęcie w trudnych warunkach, jest ogromna. Moim marzeniem jest wyjazd na fotograficzne safari lub wyprawę na Islandię, by fotografować zorzę polarną.</p>
+      <p class="lang-en" style="display:none">Photography is the art of seeing. Many people pass by beautiful things indifferently. I try to see magic in everyday life. My favorite subject is nature. Going out to the forest at dawn, when the mist is still rising over the meadows, is a mystical experience. I try to capture that fleeting moment, the play of light and shadow on leaves, or a dewdrop on a spiderweb.</p>
+      <p class="lang-en" style="display:none">I am interested in both macro photography (showing the world from very close up, e.g., insects or plant structures) and landscapes. The camera is a time machine for me – a photo taken today will be a souvenir in 10, 20 years. It allows me to return to places and emotions that have passed. It's also a great reason to leave the house and travel.</p>
+      <p class="lang-en" style="display:none">I am learning manual camera operation – ISO, shutter speed, aperture. This is the technical side of photography that gives full control over the image. I don't like relying on "Auto" mode. The satisfaction when you manage to take a perfectly sharp and lit photo in difficult conditions is huge.</p>
+    </section>
+
+    <!-- 11. NIEMIECKI -->
+    <section id="german">
+      <h2 class="lang-pl">Język Niemiecki</h2>
+      <h2 class="lang-en" style="display:none">German Language</h2>
+      <div class="media-container">
+        <img src="https://images.unsplash.com/photo-1527866959252-deab85ef7d1b?auto=format&fit=crop&w=1000&q=80" alt="Berlin Germany">
+      </div>
+      <p class="lang-pl">Nauka języków obcych to trening dla mózgu. Wybrałem język niemiecki, ponieważ fascynuje mnie kultura krajów niemieckojęzycznych oraz ich wkład w technikę i filozofię. Wiele osób uważa niemiecki za język szorstki, ale dla mnie jest on bardzo precyzyjny i logiczny. Gramatyka, choć skomplikowana, ma jasne zasady, które przypominają mi trochę kodowanie – wszystko ma swoje miejsce i strukturę.</p>
+      <p class="lang-en" style="display:none">Learning foreign languages is training for the brain. I chose German because I am fascinated by the culture of German-speaking countries and their contribution to technology and philosophy. Many people consider German harsh, but for me it is very precise and logical. The grammar, although complicated, has clear rules that remind me a bit of coding – everything has its place and structure.</p>
+      <p class="lang-pl">Korzystam z różnych metod nauki: aplikacje mobilne (Duolingo, Anki), oglądanie seriali na Netflixie z niemieckimi napisami (np. "Dark") oraz słuchanie podcastów. Staram się otaczać językiem na co dzień. Moim celem jest osiągnięcie poziomu C1, co pozwoliłoby mi na swobodną komunikację biznesową i czytanie literatury fachowej w oryginale. Niemcy to potęga gospodarcza, więc znajomość tego języka to wielki atut na rynku pracy.</p>
+      <p class="lang-en" style="display:none">I use various learning methods: mobile apps (Duolingo, Anki), watching Netflix series with German subtitles (e.g., 'Dark'), and listening to podcasts. I try to surround myself with the language every day. My goal is to reach level C1, which would allow free business communication and reading professional literature in the original. Germany is an economic powerhouse, so knowing this language is a big advantage on the job market.</p>
+      <p class="lang-pl">Lubię też brzmienie tego języka w muzyce (np. Rammstein). Nauka niemieckiego uczy mnie systematyczności, bo bez regularnych powtórek słówka szybko uciekają z pamięci. To długi maraton, a nie sprint, ale każdy zrozumiany artykuł czy rozmowa daje mi poczucie ogromnego progresu.</p>
+      <p class="lang-en" style="display:none">I also like the sound of this language in music (e.g., Rammstein). Learning German teaches me consistency, because without regular revision, words quickly slip from memory. It is a long marathon, not a sprint, but every understood article or conversation gives me a sense of huge progress.</p>
+      <!-- Mała tabela słów: DE / EN / PL -->
+      <table class="vocab-table" aria-label="Słowniczek">
+        <thead>
+          <tr><th>Deutsch</th><th>English</th><th>Polski</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>der Körper</td><td>body</td><td>ciało</td></tr>
+          <tr><td>der Geist</td><td>mind/spirit</td><td>umysł/duch</td></tr>
+          <tr><td>die Gesundheit</td><td>health</td><td>zdrowie</td></tr>
+          <tr><td>laufen</td><td>to run</td><td>biegać</td></tr>
+          <tr><td>die Hantel</td><td>dumbbell</td><td>hantla</td></tr>
+          <tr><td>lernen</td><td>to learn</td><td>uczyć się</td></tr>
+          <tr><td>die Musik</td><td>music</td><td>muzyka</td></tr>
+          <tr><td>die Ruhe</td><td>calm/peace</td><td>spokój</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- MENU BOCZNE -->
+  <nav id="sidebar">
+    <!-- Przełącznik języka -->
+    <button class="lang-switch" onclick="toggleLanguage()">ZMIEŃ JĘZYK (PL/EN)</button>
+    <!-- Przyciski nawigacyjne -->
+    <button class="nav-btn active" onclick="showSection('home')">1. Start</button>
+    <button class="nav-btn" onclick="showSection('ai-web')">2. AI Web Dev</button>
+    <button class="nav-btn" onclick="showSection('kalimba')">3. Kalimba</button>
+    <button class="nav-btn" onclick="showSection('drawing')">4. Rysowanie</button>
+    <button class="nav-btn" onclick="showSection('music')">5. Muzyka</button>
+    <button class="nav-btn" onclick="showSection('psychology')">6. Psychologia</button>
+    <button class="nav-btn" onclick="showSection('youtube')">7. Youtube</button>
+    <button class="nav-btn" onclick="showSection('gaming')">8. Gry</button>
+    <button class="nav-btn" onclick="showSection('sport')">9. Sport</button>
+    <button class="nav-btn" onclick="showSection('photo')">10. Fotografia</button>
+    <button class="nav-btn" onclick="showSection('german')">11. Niemiecki</button>
+  </nav>
+
+  <script>
+  // --- JAVASCRIPT: LOGIKA ---
+  // 1. Zmiana sekcji
+  function showSection(sectionId) {
+    // Ukryj wszystko
+    const sections = document.querySelectorAll('section');
+    sections.forEach(sec => sec.classList.remove('active'));
+    // Pokaż wybrane
+    const activeSection = document.getElementById(sectionId);
+    if(activeSection) {
+      activeSection.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    // Zaktualizuj przyciski menu
+    const buttons = document.querySelectorAll('.nav-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    if (event && event.target) { event.target.classList.add('active'); }
+  }
+
+  // 2. Zmiana języka (prosta implementacja)
+  let currentLang = 'pl';
+  function toggleLanguage() {
+    const plElements = document.querySelectorAll('.lang-pl');
+    const enElements = document.querySelectorAll('.lang-en');
+    if (currentLang === 'pl') {
+      plElements.forEach(el => el.style.display = 'none');
+      enElements.forEach(el => el.style.display = 'block');
+      currentLang = 'en';
+    } else {
+      plElements.forEach(el => el.style.display = 'block');
+      enElements.forEach(el => el.style.display = 'none');
+      currentLang = 'pl';
+    }
+  }
+
+  // ===== (2) AI & Web Development – obsługa flip karty =====
+  (function(){
+    const card = document.getElementById('aiFlipCard');
+    const front = document.getElementById('aiFlipFront');
+    const back = document.getElementById('aiFlipBack');
+    if(card && front && back){
+      const toggleFlip = () => card.classList.toggle('flipped');
+      front.addEventListener('click', toggleFlip);
+      back.addEventListener('click', toggleFlip);
+    }
+  })();
+
+  // ===== (3) Kalimba – WebAudio: 3 różne dźwięki =====
+  ;(function(){
+    let audioCtx;
+    function noteToFrequency(note){
+      const A4 = 440; const A4_index = 9 + 12*4;
+      const map = { C:0, 'C#':1, Db:1, D:2, 'D#':3, Eb:3, E:4, F:5, 'F#':6, Gb:6, G:7, 'G#':8, Ab:8, A:9, 'A#':10, Bb:10, B:11 };
+      const m = /^([A-G](?:#|b)?)(\d)$/.exec(note);
+      if(!m) return A4;
+      const pitch = map[m[1]]; const oct = parseInt(m[2],10);
+      const index = pitch + 12*oct;
+      return A4 * Math.pow(2, (index - A4_index)/12);
+    }
+    function play(note){
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const freq = noteToFrequency(note);
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.35, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0008, now + 1.2);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 1.25);
+    }
+    document.querySelectorAll('.kalimba-btn').forEach(btn => {
+      btn.addEventListener('click', () => play(btn.dataset.note));
+    });
+  })();
+
+  // ===== (9) Sport – prosta fizyka: rzut hantlą =====
+  ;(function(){
+    const box = document.getElementById('gymPlayground');
+    const db = document.getElementById('dumbbell');
+    if(!box || !db) return;
+    let isDown = false, startX=0, startY=0, lastX=0, lastY=0, vx=0, vy=0, raf=null, lastT=0;
+    function clamp(val, min, max){ return Math.max(min, Math.min(max, val)); }
+    function getBounds(){ return box.getBoundingClientRect(); }
+    function toLocal(x, y){ const b=getBounds(); return { x: x - b.left, y: y - b.top }; }
+    function setPos(x, y){ const B = getBounds(); const w = db.offsetWidth, h = db.offsetHeight; const nx = clamp(x, 0, B.width - w), ny = clamp(y, 0, B.height - h); db.style.left = nx + 'px'; db.style.top = ny + 'px'; }
+    function onDown(e){ isDown = true; cancelAnimationFrame(raf); const p = (e.touches ? e.touches[0] : e); const local = toLocal(p.clientX, p.clientY); startX = local.x - db.offsetLeft; startY = local.y - db.offsetTop; lastX = local.x; lastY = local.y; vx = vy = 0; lastT = performance.now(); e.preventDefault(); }
+    function onMove(e){ if(!isDown) return; const p=(e.touches?e.touches[0]:e); const local=toLocal(p.clientX,p.clientY); const t=performance.now(); const dx = local.x - lastX, dy = local.y - lastY, dt = Math.max(1, t - lastT); vx = dx / dt * 16; vy = dy / dt * 16; setPos(local.x - startX, local.y - startY); lastX = local.x; lastY = local.y; lastT = t; e.preventDefault(); }
+    function onUp(){ if(!isDown) return; isDown=false; fly(); }
+    function fly(){ const friction = 0.985, gravity = 0.55, bounce = 0.75; const step = () => { const B = box.getBoundingClientRect(); const w = db.offsetWidth, h = db.offsetHeight; let x = db.offsetLeft + vx; let y = db.offsetTop + vy; vy += gravity; if(x <= 0){ x = 0; vx = -vx * bounce; } if(y <= 0){ y = 0; vy = -vy * bounce; } if(x >= B.width - w){ x = B.width - w; vx = -vx * bounce; } if(y >= B.height - h){ y = B.height - h; vy = -vy * bounce; } setPos(x, y); vx *= friction; vy *= friction; if(Math.hypot(vx,vy) < 0.2 && Math.abs(y - (B.height - h)) < 0.5) return; raf = requestAnimationFrame(step); }; raf = requestAnimationFrame(step); }
+    db.addEventListener('mousedown', onDown); document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp);
+    db.addEventListener('touchstart', onDown, {passive:false}); document.addEventListener('touchmove', onMove, {passive:false}); document.addEventListener('touchend', onUp);
+  })();
+
+  /* === [ADDON JS v3] Neon Drawing ============================== */
+  (function(){
+    const canvas = document.getElementById('drawCanvas'); if(!canvas) return;
+    const section = canvas.closest('section'); const ctx = canvas.getContext('2d');
+    let drawing = false, last = null, tool = 'pen';
+    const penBtn = document.getElementById('toolPen'); const erBtn = document.getElementById('toolEraser'); const sizeEl = document.getElementById('drawSize');
+    function doResize(){ const rect = canvas.getBoundingClientRect(); const w = Math.max(300, Math.floor(rect.width || canvas.parentElement.clientWidth || 600)); const h = Math.max(200, Math.floor(rect.height || 360)); if(canvas.width===w&&canvas.height===h) return; const tmp=document.createElement('canvas'); tmp.width=canvas.width; tmp.height=canvas.height; tmp.getContext('2d').drawImage(canvas,0,0); canvas.width=w; canvas.height=h; ctx.drawImage(tmp,0,0); }
+    const obs = new MutationObserver(()=>{ if(section.classList.contains('active')) requestAnimationFrame(doResize); }); obs.observe(section,{attributes:true,attributeFilter:['class']});
+    window.addEventListener('resize', ()=> requestAnimationFrame(doResize));
+    function setStyle(){ const size = parseInt(sizeEl && sizeEl.value,10) || 12; ctx.lineWidth=size; ctx.lineCap='round'; ctx.lineJoin='round'; if(tool==='pen'){ ctx.globalCompositeOperation='source-over'; ctx.strokeStyle='#00ffff'; ctx.shadowColor='#00ffff'; ctx.shadowBlur=12; } else { ctx.globalCompositeOperation='destination-out'; ctx.strokeStyle='rgba(0,0,0,1)'; ctx.shadowColor='transparent'; ctx.shadowBlur=0; } }
+    function pos(e){ const p=(e.touches?e.touches[0]:e); const r=canvas.getBoundingClientRect(); return {x:p.clientX-r.left, y:p.clientY-r.top}; }
+    function start(e){ drawing=true; last=pos(e); setStyle(); e.preventDefault(); }
+    function move(e){ if(!drawing) return; const p=pos(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; e.preventDefault(); }
+    function end(){ drawing=false; }
+    canvas.addEventListener('mousedown', start); canvas.addEventListener('mousemove', move); document.addEventListener('mouseup', end);
+    canvas.addEventListener('touchstart', start, {passive:false}); canvas.addEventListener('touchmove', move, {passive:false}); document.addEventListener('touchend', end);
+    penBtn && penBtn.addEventListener('click', ()=>{ tool='pen'; setStyle(); penBtn.classList.add('active'); erBtn && erBtn.classList.remove('active'); });
+    erBtn && erBtn.addEventListener('click', ()=>{ tool='eraser'; setStyle(); erBtn.classList.add('active'); penBtn && penBtn.classList.remove('active'); });
+    sizeEl && sizeEl.addEventListener('input', setStyle);
+  })();
+
+  /* === [ADDON JS v3] Photo Magnifier =========================== */
+  (function(){
+    const img = document.querySelector('#photo .magnify-wrap img'); if(!img) return; const wrap = img.closest('.magnify-wrap'); const lens = document.createElement('div'); lens.className='neon-lens'; wrap.appendChild(lens);
+    let zoom=2.5, bw=2; function updateBG(){ const w=img.clientWidth||img.naturalWidth; const h=img.clientHeight||img.naturalHeight; if(!w||!h) return; lens.style.backgroundImage=`url('${img.src}')`; lens.style.backgroundSize=`${w*zoom}px ${h*zoom}px`; }
+    if(img.complete){ updateBG(); } else { img.addEventListener('load', updateBG); } window.addEventListener('resize', updateBG);
+    function move(e){ const p=(e.touches?e.touches[0]:e); const r=img.getBoundingClientRect(); let x=p.clientX-r.left, y=p.clientY-r.top; x=Math.max(0, Math.min(x, r.width)); y=Math.max(0, Math.min(y, r.height)); const lw=lens.offsetWidth, lh=lens.offsetHeight; lens.style.left=(x-lw/2)+'px'; lens.style.top=(y-lh/2)+'px'; const bgX=-(x*zoom - lw/2 + bw), bgY=-(y*zoom - lh/2 + bw); lens.style.backgroundPosition=`${bgX}px ${bgY}px`; }
+    function show(){ updateBG(); lens.style.opacity=1; } function hide(){ lens.style.opacity=0; }
+    img.addEventListener('mouseenter', show); img.addEventListener('mouseleave', hide); img.addEventListener('mousemove', move);
+    img.addEventListener('touchstart', (e)=>{ show(); move(e); }, {passive:false}); img.addEventListener('touchmove', move, {passive:false}); img.addEventListener('touchend', hide);
+  })();
+
+  /* === [ADDON JS v3] Neon Mini-Game (Easy Catch) =============== */
+  (function(){
+    const cvs=document.getElementById('neonGame'); const startBtn=document.getElementById('gameStart'); const scoreEl=document.getElementById('gameScore'); const livesEl=document.getElementById('gameLives'); const btnL=document.getElementById('btnLeft'); const btnR=document.getElementById('btnRight'); if(!cvs||!startBtn||!scoreEl||!livesEl) return;
+    const ctx=cvs.getContext('2d'); const W=cvs.width, H=cvs.height; const player={x:W/2,y:H-24,w:60,h:10,speed:4.2,vx:0}; let items=[], running=false, score=0, lives=3, tick=0;
+    function reset(){ items=[]; score=0; lives=3; tick=0; player.x=W/2; player.vx=0; scoreEl.textContent='0'; livesEl.textContent=String(lives); running=true; loop(); }
+    function spawn(){ const isOrb=Math.random()<0.7; const r=isOrb?(6+Math.random()*6):(8+Math.random()*8); items.push({x:r+Math.random()*(W-2*r), y:-r-4, r, vy:1.1+Math.random()*1.2, type:isOrb?'orb':'block'}); }
+    function input(){ player.x+=player.vx; const half=player.w/2; if(player.x<half+6) player.x=half+6; if(player.x>(W-(half+6))) player.x=W-(half+6); }
+    function drawGlowCircle(x,y,r,color,blur=14){ ctx.save(); ctx.fillStyle=color; ctx.shadowColor=color; ctx.shadowBlur=blur; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill(); ctx.restore(); }
+    function drawGlowRect(x,y,w,h,color,blur=14){ ctx.save(); ctx.fillStyle=color; ctx.shadowColor=color; ctx.shadowBlur=blur; ctx.fillRect(x,y,w,h); ctx.restore(); }
+    function draw(){ ctx.clearRect(0,0,W,H); drawGlowRect(player.x-player.w/2, player.y-player.h/2, player.w, player.h, '#00ffff', 16); items.forEach(it=>{ if(it.type==='orb') drawGlowCircle(it.x,it.y,it.r,'#00ffff',12); else drawGlowRect(it.x-it.r,it.y-it.r,it.r*2,it.r*2,'#ff00ff',12); }); }
+    function update(){ tick++; if(tick%55===0) spawn(); if(tick%420===0) items.forEach(it=>it.vy+=0.15); input(); items.forEach(it=>it.y+=it.vy); const pad={x:player.x,y:player.y,w:player.w,h:player.h}; items=items.filter(it=>{ if(it.y-it.r>H+10) return false; const withinX=(it.x+it.r)>=(pad.x-pad.w/2)&&(it.x-it.r)<=(pad.x+pad.w/2); const withinY=(it.y+it.r)>=(pad.y-pad.h/2)&&(it.y-it.r)<=(pad.y+pad.h/2); if(withinX&&withinY){ if(it.type==='orb'){ score++; scoreEl.textContent=String(score);} else { lives--; livesEl.textContent=String(lives); if(lives<=0) running=false;} return false;} return true; }); }
+    function loop(){ if(!running){ draw(); return gameOver(); } update(); draw(); requestAnimationFrame(loop); }
+    function gameOver(){ ctx.save(); ctx.font='22px Segoe UI, sans-serif'; ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.shadowColor='#ff00ff'; ctx.shadowBlur=12; const isPL=(typeof currentLang!=='undefined'? currentLang==='pl' : true); const t1=isPL?'Koniec gry':'Game Over'; const t2=isPL?'Naciśnij Start, aby zagrać ponownie':'Press Start to play again'; ctx.fillText(t1, W/2, H/2-8); ctx.font='14px Segoe UI, sans-serif'; ctx.fillText(t2, W/2, H/2+16); ctx.restore(); }
+    function key(e){ if(e.type==='keydown'){ if(e.key==='ArrowLeft') player.vx=-player.speed; if(e.key==='ArrowRight') player.vx=+player.speed; } else { if(e.key==='ArrowLeft'&&player.vx<0) player.vx=0; if(e.key==='ArrowRight'&&player.vx>0) player.vx=0; } }
+    window.addEventListener('keydown', key); window.addEventListener('keyup', key);
+    let holdL=false, holdR=false, holdInt; function startHold(){ clearInterval(holdInt); holdInt=setInterval(()=>{ player.vx=(holdL?-player.speed:0)+(holdR?player.speed:0); },16);} function stopHold(){ holdL=holdR=false; clearInterval(holdInt); player.vx=0; }
+    if(btnL&&btnR){ btnL.addEventListener('mousedown', ()=>{holdL=true; startHold();}); btnR.addEventListener('mousedown', ()=>{holdR=true; startHold();}); document.addEventListener('mouseup', stopHold); btnL.addEventListener('touchstart', (e)=>{e.preventDefault(); holdL=true; startHold();}, {passive:false}); btnR.addEventListener('touchstart', (e)=>{e.preventDefault(); holdR=true; startHold();}, {passive:false}); document.addEventListener('touchend', stopHold); }
+    startBtn.addEventListener('click', ()=> reset());
+  })();
+
+  // ===== (6) Psychologia – Mindfulness (simple breathe) =====
+  ;(function(){
+    const circle = document.getElementById('mindCircle');
+    const label  = document.getElementById('mindLabel');
+    const startB = document.getElementById('mindStart');
+    const stopB  = document.getElementById('mindStop');
+    const minsEl = document.getElementById('mindMinutes');
+    if(!circle || !label || !startB || !stopB || !minsEl) return;
+
+    let running = false, timer = null, endAt = 0;
+    const inhaleMs = 4000, exhaleMs = 4000; // simple 4–4 rhythm
+
+    function t(key){
+      const pl = { ready:'Przygotuj się', inhale:'Wdech', exhale:'Wydech', done:'Koniec' };
+      const en = { ready:'Get ready',    inhale:'Inhale', exhale:'Exhale', done:'Done' };
+      return (typeof currentLang !== 'undefined' && currentLang === 'en') ? en[key] : pl[key];
+    }
+    function setLabel(k){ label.textContent = t(k); }
+
+    function inhale(){ if(!running) return; setLabel('inhale'); circle.classList.remove('shrink'); circle.classList.add('grow'); timer = setTimeout(exhale, inhaleMs); }
+    function exhale(){ if(!running) return; setLabel('exhale'); circle.classList.remove('grow'); circle.classList.add('shrink'); timer = setTimeout(loop, exhaleMs); }
+    function loop(){ if(!running) return; if(Date.now() >= endAt){ finish(); return; } inhale(); }
+    function startSession(){ const mins = parseInt(minsEl.value, 10) || 1; endAt = Date.now() + mins * 60 * 1000; running = true; startB.classList.add('active'); stopB.disabled = false; inhale(); }
+    function finish(){ running = false; clearTimeout(timer); startB.classList.remove('active'); circle.classList.remove('grow','shrink'); setLabel('done'); }
+    function stopSession(){ running = false; clearTimeout(timer); startB.classList.remove('active'); circle.classList.remove('grow','shrink'); setLabel('ready'); }
+
+    // Init
+    setLabel('ready');
+    startB.addEventListener('click', function(){ if(!running) startSession(); });
+    stopB.addEventListener('click', stopSession);
+  })();
+  </script>
+</body>
+</html>
